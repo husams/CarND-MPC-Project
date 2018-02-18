@@ -7,7 +7,7 @@ using CppAD::AD;
 
 // TODO: Set the timestep length and duration
 constexpr size_t N = 10;
-constexpr double dt = 0.2;
+constexpr double dt = 0.3;
 
 // Start position fot the variables
 constexpr size_t x_start     = 0;
@@ -47,14 +47,15 @@ class FG_eval {
     // the Solver function below.
   fg[0] = 0;
   for (size_t t = 0; t < N; t++) {
-    fg[0] += 5000 * CppAD::pow(vars[cte_start+t],2);
-    fg[0] += 2500 * CppAD::pow(vars[epsi_start+t],2);
+    fg[0] += 3000 * CppAD::pow(vars[cte_start+t],2);
+    fg[0] += 3000 * CppAD::pow(vars[epsi_start+t],2);
     fg[0] += CppAD::pow(vars[v_start+t]-ref_v,2);
   }
 
   for(size_t t = 0; t < N-1; t++) {
     fg[0] += 5 * CppAD::pow(vars[delta_start+t],2);
     fg[0] += 5 * CppAD::pow(vars[a_start + t], 2);
+    fg[0] += 700*CppAD::pow(vars[delta_start + t] * vars[v_start+t], 2);
   }
 
   for (size_t t = 0; t < N-2; t++) {
@@ -87,6 +88,11 @@ class FG_eval {
       AD<double> cte0     = vars[cte_start + t];
       AD<double> epsi0    = vars[epsi_start + t];
       AD<double> a0       = vars[a_start + t];
+
+      // if (t > 1) {   // use previous actuations (to account for latency)
+      //   a0     = vars[a_start + t - 1];
+      //   delta0 = vars[delta_start + t - 1];
+      // }
 
       AD<double> f0      = coeffs[0] + coeffs[1] * x0 + coeffs[2]* CppAD::pow(x0, 2) + coeffs[3]* CppAD::pow(x0, 3);
       AD<double> psides0 = CppAD::atan(coeffs[1]+2*coeffs[2]*x0 + 3 * coeffs[3]*CppAD::pow(x0, 2));
