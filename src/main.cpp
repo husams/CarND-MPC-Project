@@ -100,7 +100,7 @@ int main() {
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
     string sdata = string(data).substr(0, length);
-    cout << sdata << endl;
+    //cout << sdata << endl;
     if (sdata.size() > 2 && sdata[0] == '4' && sdata[1] == '2') {
       string s = hasData(sdata);
       if (s != "") {
@@ -114,20 +114,14 @@ int main() {
           double py = j[1]["y"];
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
-          //double delta = j[1]["steering_angle"];
-          //double acceleration = j[1]["throttle"];
-
+      
           /*
           * TODO: Calculate steering angle and throttle using MPC.
           *
           * Both are in between [-1, 1].
           *
           */
-          // double latency =  0.1;
-          // px  = px + v*cos(psi)*latency;
-          // py  = py + v*sin(psi)*latency;
-          // psi = psi + v*delta/Lf*latency;
-          // v = v + acceleration*latency;
+
 
           // 1. Transform to local Coordinate
           auto waypoints = transformWaypointsToLocalCoordinate(px, py, psi, ptsx, ptsy);
@@ -142,14 +136,13 @@ int main() {
           auto epsi = -atan(coeffs[1]);
 
           // 5. constract the ccurrent state.
-
           Eigen::VectorXd state(6);
           state << 0, 0, 0, v, cte, epsi;
 
           // 6. Compute next steering angle and  hrottle
           auto solution = mpc.Solve(state, coeffs);
 
-          double steer_value    = -solution[0] / (deg2rad(25));
+          double steer_value    = solution[0] / (deg2rad(25));
           double throttle_value = solution[1];
 
 
@@ -192,7 +185,7 @@ int main() {
 
 
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
-          std::cout << msg << std::endl;
+          //std::cout << msg << std::endl;
           // Latency
           // The purpose is to mimic real driving conditions where
           // the car does actuate the commands instantly.

@@ -7,7 +7,7 @@ using CppAD::AD;
 
 // TODO: Set the timestep length and duration
 constexpr size_t N = 10;
-constexpr double dt = 0.3;
+constexpr double dt = 0.1;
 
 // Start position fot the variables
 constexpr size_t x_start     = 0;
@@ -19,7 +19,7 @@ constexpr size_t epsi_start  = cte_start   + N;
 constexpr size_t delta_start = epsi_start  + N;
 constexpr size_t a_start     = delta_start + N - 1;
 
-constexpr double ref_v = 70;
+constexpr double ref_v = 80;
 
 // This value assumes the model presented in the classroom is used.
 //
@@ -47,19 +47,18 @@ class FG_eval {
     // the Solver function below.
   fg[0] = 0;
   for (size_t t = 0; t < N; t++) {
-    fg[0] += 3000 * CppAD::pow(vars[cte_start+t],2);
-    fg[0] += 3000 * CppAD::pow(vars[epsi_start+t],2);
+    fg[0] += 2000 * CppAD::pow(vars[cte_start+t],2);
+    fg[0] += 2000 * CppAD::pow(vars[epsi_start+t],2);
     fg[0] += CppAD::pow(vars[v_start+t]-ref_v,2);
   }
 
   for(size_t t = 0; t < N-1; t++) {
-    fg[0] += 5 * CppAD::pow(vars[delta_start+t],2);
-    fg[0] += 5 * CppAD::pow(vars[a_start + t], 2);
-    fg[0] += 700*CppAD::pow(vars[delta_start + t] * vars[v_start+t], 2);
+    fg[0] += 1000 * CppAD::pow(vars[delta_start + t] * vars[v_start+t], 2);
+    fg[0] += 3 * CppAD::pow(vars[a_start + t], 2);
   }
 
   for (size_t t = 0; t < N-2; t++) {
-    fg[0] += 200 * CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
+    fg[0] += 150 * CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
     fg[0] += 10 * CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
   }
 
@@ -89,20 +88,21 @@ class FG_eval {
       AD<double> epsi0    = vars[epsi_start + t];
       AD<double> a0       = vars[a_start + t];
 
-      // if (t > 1) {   // use previous actuations (to account for latency)
-      //   a0     = vars[a_start + t - 1];
-      //   delta0 = vars[delta_start + t - 1];
-      // }
+      if (t > 1) {
+
+        a0     = vars[a_start + t - 1];
+        delta0 = vars[delta_start + t - 1];
+      }
 
       AD<double> f0      = coeffs[0] + coeffs[1] * x0 + coeffs[2]* CppAD::pow(x0, 2) + coeffs[3]* CppAD::pow(x0, 3);
       AD<double> psides0 = CppAD::atan(coeffs[1]+2*coeffs[2]*x0 + 3 * coeffs[3]*CppAD::pow(x0, 2));
 
       fg[x_start + t + 2]    = x1 - (x0 + v0 *  CppAD::cos(psi0) * dt);
       fg[y_start + t + 2]    = y1 - (y0 + v0 *  CppAD::sin(psi0) * dt);
-      fg[psi_start + t + 2]  = psi1 - (psi0 + v0 * (delta0/Lf) * dt);
+      fg[psi_start + t + 2]  = psi1 - (psi0 - v0 * (delta0/Lf) * dt);
       fg[v_start + t + 2]    = v1 - (v0 + a0 * dt);
       fg[cte_start + t + 2]  = cte1 - ((f0 - y0) + v0 * CppAD::sin(epsi0) * dt);
-      fg[epsi_start + t + 2] = epsi1 - ((psi0 - psides0) + v0 * (delta0 / Lf) * dt);
+      fg[epsi_start + t + 2] = epsi1 - ((psi0 - psides0) - v0 * (delta0 / Lf) * dt);
 
     }
   }
