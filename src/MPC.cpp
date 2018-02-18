@@ -19,7 +19,7 @@ constexpr size_t epsi_start  = cte_start   + N;
 constexpr size_t delta_start = epsi_start  + N;
 constexpr size_t a_start     = delta_start + N - 1;
 
-constexpr double ref_v = 80;
+constexpr double ref_v = 70;
 
 // This value assumes the model presented in the classroom is used.
 //
@@ -47,18 +47,20 @@ class FG_eval {
     // the Solver function below.
   fg[0] = 0;
   for (size_t t = 0; t < N; t++) {
-    fg[0] += 2000 * CppAD::pow(vars[cte_start+t],2);
-    fg[0] += 2000 * CppAD::pow(vars[epsi_start+t],2);
+    fg[0] += 1500 * CppAD::pow(vars[cte_start+t],2);
+    fg[0] += 1500 * CppAD::pow(vars[epsi_start+t],2);
     fg[0] += CppAD::pow(vars[v_start+t]-ref_v,2);
   }
 
+  // Minimize the use of actuators.
   for(size_t t = 0; t < N-1; t++) {
-    fg[0] += 1000 * CppAD::pow(vars[delta_start + t] * vars[v_start+t], 2);
-    fg[0] += 3 * CppAD::pow(vars[a_start + t], 2);
+    fg[0] += 800 * CppAD::pow(vars[delta_start + t] * vars[v_start+t], 2);
+    fg[0] += 2 * CppAD::pow(vars[a_start + t], 2);
   }
 
+  // Minimize the value gap between sequential actuations.
   for (size_t t = 0; t < N-2; t++) {
-    fg[0] += 150 * CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
+    fg[0] += 100 * CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
     fg[0] += 10 * CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
   }
 
