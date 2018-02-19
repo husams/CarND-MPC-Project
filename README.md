@@ -2,6 +2,16 @@
 Self-Driving Car Engineer Nanodegree Program
 
 ---
+### Rubic Points
+
+## Model
+
+Kinematic Moeel is used in this project to  model the vehicle dynamics and constraints, because it's simpple and easy to implement, the model ignore many elements like gravity and tire forces.
+
+The model consist of the following componenets:
+
+* THe cirrent state of the vehical which is the current position *x* , *y*, the orientation $\sqrt{3x-1}+(1+x)^2$ 
+
 
 ## Dependencies
 
