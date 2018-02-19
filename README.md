@@ -37,7 +37,7 @@ Part of pf the project is having to deal with 100ms delay, and what I found is t
 2. Prediect the next state with 0.1 time delay and pass it as the current state to solver.
 3. Is to modify the equations to use actuator values from t-2 timestamp and set dt to 0.1.
 
-Option (1) seems mostly work except around sharp turns, where couldn't get to (2) to simply work. At the end I used (3) whoch seems to work and you can see the code in MPC.cpp line 93.
+Option (1) mostly work except around sharp turns, where couldn't get to (2) to simply work. At the end I used (3) whoch seems to work and you can see the code in MPC.cpp line 93.
 
 ## Dependencies
 
