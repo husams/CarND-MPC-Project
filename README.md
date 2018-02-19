@@ -11,11 +11,33 @@ Kinematic Moeel is used in this project to  model the vehicle dynamics and const
 The model consist of the following componenets:
 
 1. The current state of the vehical which is the current position *x* , *y*, the orientation &psi; and velocity *v*.
-2. Error values which used to shows the difference between reference trajectory and predicted trajectory (Cross Treck errror *cte* which is the difference between center of the road the vechile position and orientation error *e*&psi;.)
-3. Actuators inputs which allows to control state of the vehicle overtime, most car has three actuator inputs (Steering wheel, throttle and break pedals), but in this model we will consider throttle and break pedals as single actuator with positive value for acceleration and negitive value for break, which reduce the vehical control two:  &delta; for steering angle and a for acceleration.
+2. Error values which used to show the difference between reference trajectory and predicted trajectory (Cross Treck errror *cte* which is the difference between center of the road the vechile position and orientation error *e*&psi;.)
+3. Actuators inputs which allows to control state of the vehicle overtime, most cars has three actuator inputs (Steering wheel, throttle and break pedals), but in this model we will consider throttle and break pedals as single actuator with positive value for acceleration and negitive value for break, which reduce the vehical control to two controls:  &delta; for steering angle and a for acceleration.
 4. The following set of equations to predict the next state using the current state and input contols:
 
 ![Alt text](./model.png)
+
+## Timestep Length and Elapsed Duration (N & dt)
+
+1. For N I use values 5,10,15 to 25, And what I found is that small values doesn't  have enough information to predict the trajectory, and larger valuue simply to slow to use for trajectory prediction. So I endup using 10 which seems tI o work.
+2. For dt I tried 0.05, 0.1, 0.15 to 0.3 and found small value work better then larger ones, at the end  I decided to use 0.1 which seems to make vehical more stable once you account to latency.
+
+So the final values I used N = 10 and dt = 0.1.
+
+## Polynomial Fitting and MPC Preprocessing
+
+The waypoints received from the in global coordinates whcih was converted to vehicel's coordinates before polynomial fittingto simplify calculation and debugging. The waypoints where converted by forst shifting to the current position, followd by 2D routation to align x-axis.
+
+Also as result of the transformation we can now set x, y and &psi; to zero in the current state.
+
+## Model Predictive Control with Latency
+
+Part of pf the project is having to deal with 100ms delay, and what I found is three approach which was suggested in the discussion forum:
+1. Set dt with value larger then delay say 0.2
+2. Prediect the next state with 0.1 time delay and pass it as the current state to solver.
+3. Is to modify the equations to use actuator values from t-2 timestamp and set dt to 0.1.
+
+Option (1) seems mostly work except around sharp turns, where couldn't get to (2) to simply work. At the end I used (3) whoch seems to work and you can see the code in MPC.cpp line 93.
 
 ## Dependencies
 

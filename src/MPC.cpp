@@ -91,7 +91,7 @@ class FG_eval {
       AD<double> a0       = vars[a_start + t];
 
       if (t > 1) {
-
+	// Use t-2 timetamp to Account to latancy 
         a0     = vars[a_start + t - 1];
         delta0 = vars[delta_start + t - 1];
       }
