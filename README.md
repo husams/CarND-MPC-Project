@@ -10,11 +10,12 @@ Kinematic Moeel is used in this project to  model the vehicle dynamics and const
 
 The model consist of the following componenets:
 
-1. The current state of the vehical which is the current position *x* , *y*, the orientation <sub>&psi;</sub> and velocity *v*.
-2. Error values which used to shows the difference between reference trajectory and predicted trajectory (Cross Treck errror *cte* which is the difference between center of the rood the vechile position and orientation error *e*<sub>&psi;</sub>.)
-3. Actuators inputs which allows to control state of the vehicle overtime, most car has three actuator inputs (Steering wheel, throttle and break pedals), but in this model we will consider throttle and break pedals as single actuator with positive value for acceleration and negitive value for break, which reduce the vehical control two:  <sub>&delta;</sub> for steering angle and a for accekeration.
-3.   
+1. The current state of the vehical which is the current position *x* , *y*, the orientation &psi; and velocity *v*.
+2. Error values which used to shows the difference between reference trajectory and predicted trajectory (Cross Treck errror *cte* which is the difference between center of the road the vechile position and orientation error *e*&psi;.)
+3. Actuators inputs which allows to control state of the vehicle overtime, most car has three actuator inputs (Steering wheel, throttle and break pedals), but in this model we will consider throttle and break pedals as single actuator with positive value for acceleration and negitive value for break, which reduce the vehical control two:  &delta; for steering angle and a for acceleration.
+4. The following set of equations to predict the next state using the current state and input contols:
 
+![Alt text](./model.png)<img src="./model.png">
 
 ## Dependencies
 
