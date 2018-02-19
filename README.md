@@ -15,7 +15,7 @@ The model consist of the following componenets:
 3. Actuators inputs which allows to control state of the vehicle overtime, most car has three actuator inputs (Steering wheel, throttle and break pedals), but in this model we will consider throttle and break pedals as single actuator with positive value for acceleration and negitive value for break, which reduce the vehical control two:  &delta; for steering angle and a for acceleration.
 4. The following set of equations to predict the next state using the current state and input contols:
 
-![Alt text](./model.png)<img src="./model.png">
+![Alt text](./model.png)
 
 ## Dependencies
 
